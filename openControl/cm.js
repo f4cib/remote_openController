@@ -1,6 +1,6 @@
 function setRegisterArray(button, regArr)
 {
-    var checkHowManyOn = verifyButtons(regArr, 4);
+    var checkHowManyOn = verifyButtons(regArr, 5);
     console.log(checkHowManyOn);
 
     var isSameKeyPressed = false;
@@ -8,7 +8,7 @@ function setRegisterArray(button, regArr)
     if (regArr[button - 1] == 1)
         isSameKeyPressed = true;
 
-    if (checkHowManyOn == 1 && button < 4)
+    if (checkHowManyOn == 1 && button < 5)
     {
         if (isSameKeyPressed == false)
         {
@@ -22,28 +22,35 @@ function setRegisterArray(button, regArr)
         {
             if (button == 1)
             {
-                regArr[0] = 1;
-                regArr[1] = 1;
-                regArr[2] = 0;
+                regArr[0] = 0;
+                regArr[1] = 0;
+                regArr[2] = 1;
                 return regArr;
             }
             if (button == 2)
             {
                 regArr[0] = 0;
                 regArr[1] = 1;
-                regArr[2] = 1;
+                regArr[2] = 0;
                 return regArr;
             }
             if (button == 3)
             {
+                regArr[0] = 0;
+                regArr[1] = 1;
+                regArr[2] = 1;
+                return regArr;
+            }
+            if (button == 4)
+            {
                 regArr[0] = 1;
                 regArr[1] = 0;
-                regArr[2] = 1;
+                regArr[2] = 0;
                 return regArr;
             }
         }
     }
-    if (checkHowManyOn == 2 && button < 4)
+    if (checkHowManyOn == 2 && button < 5)
     {
         regArr[0] = 0;
         regArr[1] = 0;
@@ -52,20 +59,20 @@ function setRegisterArray(button, regArr)
         return regArr;
     }
 
-    if (checkHowManyOn == 1 && button == 4)
+    if (checkHowManyOn == 1 && button == 5)
     {
         toggleRegisterArray(regArr, 1);
         return regArr;
     }
 
-    if (checkHowManyOn == 4 && button < 4 || checkHowManyOn == 3 && button < 4)
+    if (checkHowManyOn == 5 && button < 5 || checkHowManyOn == 4 && button < 5)
     {
         toggleRegisterArray(regArr, 0);
         regArr[button - 1] = 1;
         return regArr;
     }
 
-    if (checkHowManyOn == 4 && button == 4)
+    if (checkHowManyOn == 5 && button == 5)
     {
         regArr[0] = 1;
         regArr[1] = 1;
@@ -73,7 +80,7 @@ function setRegisterArray(button, regArr)
         return regArr;
     }
 
-    if (checkHowManyOn == 3 && button == 4 && regArr[0] == 1)
+    if (checkHowManyOn == 4 && button == 5 && regArr[0] == 1)
     {
         regArr[0] = 0;
         regArr[1] = 1;
@@ -81,7 +88,7 @@ function setRegisterArray(button, regArr)
         return regArr;
     }
 
-    if (checkHowManyOn == 3 && button == 4 && regArr[2] == 1)
+    if (checkHowManyOn == 4 && button == 5 && regArr[2] == 1)
     {
         regArr[0] = 1;
         regArr[1] = 1;
@@ -89,7 +96,7 @@ function setRegisterArray(button, regArr)
         return regArr;
     }
 
-    if (checkHowManyOn == 2 && button == 4)
+    if (checkHowManyOn == 2 && button == 5)
     {
         regArr[0] = 1;
         regArr[1] = 1;
@@ -124,25 +131,31 @@ function createLcdString(arrei, isTx)
       tempString += "*";
    else
       tempString += "&nbsp;";
-   tempString += "1&nbsp;";
+   tempString += "BEV&nbsp;";
 
    if (arrei[1]==1)
       tempString += "*";
    else
       tempString += "&nbsp;";
-   tempString += "2&nbsp;";
+   tempString += "1&nbsp;";
 
    if (arrei[2]==1)
       tempString += "*";
    else
       tempString += "&nbsp;";
-   tempString += "3&nbsp;";
+   tempString += "2&nbsp;";
 
    if (arrei[3]==1)
       tempString += "*";
    else
       tempString += "&nbsp;";
-   tempString += "All&nbsp;";
+   tempString += "3&nbsp;";
+
+   if (arrei[4]==1)
+      tempString += "*";
+   else
+      tempString += "&nbsp;";
+   tempString += "4&nbsp;";
 
    if(!isTx)
       $('#myRxString').html(tempString);
@@ -152,11 +165,11 @@ function createLcdString(arrei, isTx)
 
 function setButtons(arr) { // override setbuttons
 
-    var checkOne = verifyButtons(arr, 4);
+    var checkOne = verifyButtons(arr, 5);
 
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 5; i++) {
 
-        if (i == 3 && checkOne == 3)
+        if (i == 5 && checkOne == 5)
             setButton(i, 0);
         else
             setButton(i, arr[i]);
