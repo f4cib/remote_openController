@@ -1,3 +1,5 @@
+// one button added for beverages Tx Set is now button 5
+// function setButton_bev added to deal with css when hovering beverages direction buttons
 var isTxEditMode = false;
 var txArray = [];
 var rxArray = [];
@@ -18,7 +20,7 @@ var myResponseHandler = function(data) {
 
 function fillArrays(stringRx, stringTx)
 {
-	for(var i=0; i<4; i++)
+	for(var i=0; i<5; i++)
 	{
 		rxArray[i] = stringRx[i].charCodeAt()-48;
 		txArray[i] = stringTx[i].charCodeAt()-48;
@@ -28,7 +30,7 @@ function fillArrays(stringRx, stringTx)
 
 function setButtons(arr)
 {
-	for(var i=0; i<4; i++)
+	for(var i=0; i<5; i++)
 	{		
 		setButton(i, arr[i]);
 	}	
@@ -48,6 +50,23 @@ function setButton(btnNr, expo)
 	{
 		var offbut = document.getElementById(buttonname);
 		offbut.className = "myButton right boff";
+	};
+}
+
+function setButton_bev(btnNr, expo)
+{
+	var buttonname = 'bev'+btnNr;
+
+	if(expo == 1)
+	{
+		var onbut = document.getElementById(buttonname);
+		onbut.className = "myButton_bev right bon";
+	};
+			
+	if(expo == 0)
+	{
+		var offbut = document.getElementById(buttonname);
+		offbut.className = "myButton_bev right boff";
 	};
 }
 
@@ -88,7 +107,7 @@ function setContent(currentBank, toBankValue) {
 
 function clkButton(butNr)
 {
-	if(butNr == 4)
+	if(butNr == 5)
 	{
 		if(isTxEditMode== false)
 		{
@@ -143,7 +162,7 @@ function updateLCD()
 // set the complete Register array to given value
 function toggleRegisterArray(regA, v1)
 {
-  for (var a = 0; a < 4; a++)
+  for (var a = 0; a < 5; a++)
     regA[a] = v1;
 }
 
