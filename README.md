@@ -19,5 +19,6 @@ LLAP!
 <br>If beverages are selected i have an additionnal choice other the 6 directions. 
 <br>Up to now, i can do it by myself, and i'll share my progress, but at anytime i can request help, i will shout loud just like when i'm working a DX :) 
 <br> 
+<br>GUI can be tested and seen at http://http://f4cib.free.fr/dm5xx/
 <br>Done: html ; css & javascript 
 <br>TBD: javascript test on cm.js and Arduino code to hnndle these additional features 
