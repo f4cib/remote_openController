@@ -5,28 +5,80 @@
       <script type='text/javascript' src='cm.js'></script>
       <link href="c.css" rel="stylesheet" type="text/css"/>
    </head>
+<!-- 	F4CIB February 2021. Background image enlarged to 918x193 to be able to add beverage support.
+		additional table added with 6 directions + beverage selection (button 0); TxSet is now button 5.
+-->
    <body>
       <div id="container">
          <div class="myTab">
-            <table class="myTable">
+            <table class="myTable_bev">
                <tr>
+                  <td>
+                  </td>
+                  <td>
+                     <a id="bev1" href="#" class="myButton_bev" onClick="clkButton(bev1)"> </a>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                     <a id="bev2" href="#" class="myButton_bev" onClick="clkButton(bev2)"> </a>
+                  </td>
+                  <td>
+                  </td>
+               </tr>
+               <tr>
+                  <td>
+                     <a id="bev3" href="#" class="myButton_bev" onClick="clkButton(bev3)"> </a>
+                  </td>
+                  <td>
+                  </td>
                   <td>
                      <a id="b0" href="#" class="myButton" onClick="clkButton(0)"> </a>
                   </td>
+                  <td>
+                  </td>
+                  <td>
+                     <a id="bev4" href="#" class="myButton_bev" onClick="clkButton(bev4)"> </a>
+                  </td>
+               </tr>
+               <tr>
+                  <td>
+                  </td>
+                  <td>
+                     <a id="bev5" href="#" class="myButton_bev" onClick="clkButton(bev5)"> </a>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                     <a id="bev6" href="#" class="myButton_bev" onClick="clkButton(bev6)"> </a>
+                  </td>
+                  <td>
+                  </td>
+               </tr>
+            </table>
+		 </div>
+         <div class="myTab">
+
+           <table class="myTable">
+               <tr>
                   <td>
                      <a id="b1" href="#" class="myButton" onClick="clkButton(1)"> </a>
                   </td>
                   <td>
                      <a id="b2" href="#" class="myButton" onClick="clkButton(2)"> </a>
-                  </td> 
+                  </td>
                   <td>
                      <a id="b3" href="#" class="myButton" onClick="clkButton(3)"> </a>
+                  </td> 
+                  <td>
+                     <a id="b4" href="#" class="myButton" onClick="clkButton(4)"> </a>
                   </td>
                   <td align="center">
-                     <a id="b4" href="#" class="myButton right" onClick="clkButton(4)"> </a>
+                     <a id="b5" href="#" class="myButton right" onClick="clkButton(5)"> </a>
                   </td>
                </tr>
             </table>
+
          </div>
          <div class="myTab2" id="myTabi">
             <div id="myRxString"></div>
@@ -37,7 +89,7 @@
    <script>
       var urlToArduino = 'http://192.168.1.180';
       getAllContent();
-      $('#container').css("background-image", "url(http://h.mmmedia-online.de/multi.png)");
+      $('#container').css("background-image", "url(multi_F6KNB.jpg)");
       window.setTimeout(updateLCD,150);
    </script>
 </html>
