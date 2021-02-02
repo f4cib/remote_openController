@@ -16,12 +16,30 @@
 	position:relative;
 	top:1px;
 }
+.myButton_bev {
+	background-color:#454545;
+	-moz-border-radius:18px;
+	-webkit-border-radius:18px;
+	border-radius:18px;
+	border: 2px solid black;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	padding:10px 10px;
+}
+.myButton_bev:hover { 
+	background-color:#98FB98;
+}
+.myButton_bev:active {
+	position:relative;
+	top:1px;
+}
 
 #container
 {
-	background-image: url("stack.png");
+	background-image: url("multi_F6KNB.jpg");
     background-repeat: no-repeat;
-    width: 718px;
+    width: 918px;
     height:193px;
 	border: 1px solid red;
 }
@@ -47,7 +65,7 @@
 
 .myTab2 {
 	float: left;
-	width:200px;
+	width:230px;
 	margin-top: 80px;
 	margin-left: 50px;
 }
@@ -61,8 +79,14 @@
 .mytable
 {
 	margin-top: 76px;
-	margin-left: 50px;
+	margin-left: 67px;
 	width: 346px;
+}
+.mytable_bev
+{
+	margin-top: 49px;
+	margin-left: 19.5px;
+	width: 160px;
 }
 body
 {
