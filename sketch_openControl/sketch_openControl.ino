@@ -13,6 +13,10 @@
 *    Tribute to OL7M!
 *  LLAP!
 *
+* F4CIB - February 2021
+* SKETCHMODE 6 case added for F6KNB needs: 
+* no stackmatch needed but access to beverages and additionnal antennas out of the regular matrix already automaticaly handled by band decoder
+* Javascript will for sure need to be modified but at the end of the to do list unless needed before !
 **********************
 * Sj2w matrix:
 *        a    b    c    k4
@@ -56,7 +60,8 @@ remoteQth matrix:
 
 #include <EEPROM.h>
 
-#define I2C_ADDR    0x20  // Define I2C Address for controller
+#define I2C_ADDR    0x27  // Define I2C Address for LCD controller
+/* these pins are not needed for I2C LCD it use only SDA, SCL, GND & +5V
 #define BACKLIGHT_PIN  7
 #define En_pin  4
 #define Rw_pin  5
@@ -67,24 +72,25 @@ remoteQth matrix:
 #define D7_pin  3
 #define  LED_OFF  0
 #define  LED_ON  1
+*/
 //#define DEBUG
 
 const byte epromAddresses[] = { 0,1,2,3,4,5,6,7 };
-#define SKETCHMODE 5         // 0 = multibeaming / 1 = stack2 / 2 = stack3  / 3 = sj2w_multibeaming / 4 = sj2w stack3  / 5 CN3A => this will enable the needed files for each mode... so choose your mode...
+#define SKETCHMODE 6         // 0 = multibeaming / 1 = stack2 / 2 = stack3  / 3 = sj2w_multibeaming / 4 = sj2w stack3  / 5 CN3A => this will enable the needed files for each mode... so choose your mode...
 
 
-LiquidCrystal_I2C  lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
-
+//LiquidCrystal_I2C  lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
+LiquidCrystal_I2Clcd(I2C_ADDR, 20, 4); 	//only needed lcd(adress, n columns, n rows) here a 20x4 @ 0x27
 #ifdef ENABLEWEBSERVER
-	byte mac[] = { 0xDE, 0x7D, 0xBE, 0xEF, 0xFE, 0xED };  //**************************************** <-------------------------CHANGE MAC-ADRESS IF YOU HAVE MORE THAN 1 CONTROLLER
-														////////////////////////////////   CONFIGURE YOUR DEFAULT DETTINGS HERE   /////////////////////////////////////////////
-	byte ip[] = { 192, 168, 1, 179 };           //******** <------------------------CHANGE ARDOINOs IP TO YOUR NEEDs - DONT FORGET TO CHANGE IT EVERYWHERE (see comments WWW Content for PROGMEM) !!!!!!           
-	byte gateway[] = { 192, 168, 1, 40 };    //***** Define your routers gateway adress to the internet if needed
+	byte mac[] = { 0xDE, 0x7D, 0xBE, 0xEF, 0xFE, 0xED };  	//**************************************** <-------------------------CHANGE MAC-ADRESS IF YOU HAVE MORE THAN 1 CONTROLLER
+	////////////////////////////////   CONFIGURE YOUR DEFAULT DETTINGS HERE   /////////////////////////////////////////////
+	byte ip[] = { 192, 168, 1, 179 };           		//******** <------------------------CHANGE ARDOINOs IP TO YOUR NEEDs - DONT FORGET TO CHANGE IT EVERYWHERE (see comments WWW Content for PROGMEM) !!!!!!           
+	byte gateway[] = { 192, 168, 1, 1 };    		//***** Define your routers gateway adress to the internet if needed
 	byte subnet[] = { 255, 255, 255, 0 };
 	/////////////////////////////// Change only if you know what you re doing....
-	EthernetServer server(80);                  //*************************************************** <------------------------CHANGE PORT, IF YOU DONT LIKE PORT 80           
+	EthernetServer server(80);                  		//*************************************************** <------------------------CHANGE PORT, IF YOU DONT LIKE PORT 80           
 #endif
-											////////////////////////////// NO CHANGES HERE!!!!!
+	////////////////////////////// NO CHANGES HERE!!!!!
 boolean registersRx[4] = { 0, 0, 0, 0 };
 boolean registersTx[4] = { 0, 0, 0, 0 };
 boolean registersRxLed[4] = { 0, 0, 0, 0 };
@@ -116,6 +122,10 @@ String txDisplayArray[7] = { "SJ3W tOP", "SJ3W middle", "SJ3W bottom",  "STACK a
 String rxDisplayArray[7] = { "A", "B", "C",  "ALL", "A + B", "A + C", "B + C" };
 String txDisplayArray[7] = { "a", "b", "c",  "all", "a + b", "a + c", "b + c" };
 #endif
+#if SKETCHMODE == 6
+String rxDisplayArray[7] = { "BEV", "Tx ANT", "40M 2ele",  "20M AF", "80M Dip", "reserve", "reserve" };
+String txDisplayArray[7] = { "BEV", "Tx ANT", "40M 2ele",  "20M AF", "80M Dip", "reserve", "reserve" };
+#endif
 
 #ifdef ENABLEWEBSERVER
 /////////////////////////////////////// WWW Content for PROGMEM  CHANGE ONLY (URLs) IF YOU KNOW WHAT YOU ARE DOING!!! ////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +150,9 @@ const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h
 #endif
 #if SKETCHMODE == 5
 const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cn3a.js'></script>" };          //******** Stack 3 And************ <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+#endif
+#if SKETCHMODE == 6
+const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
 const char  message5[] PROGMEM = { "<link href=\"http://h.mmmedia-online.de/c.css\" rel=\"stylesheet\" type=\"text/css\"/>" };    //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 const char  message6[] PROGMEM = { "<link rel = \"shortcut icon\" href=\"http://h.mmmedia-online.de/favicon.ico\">" };
