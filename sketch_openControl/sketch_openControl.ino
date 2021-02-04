@@ -1,4 +1,3 @@
-
 /*
 *  This is the openControl for the remoteQth.com
 *  If you need help, feel free to contact DM5XX@gmx.de
@@ -19,25 +18,25 @@
 * Javascript will for sure need to be modified but at the end of the to do list unless needed before !
 **********************
 * Sj2w matrix:
-*        a    b    c    k4
+*         a    b    c    k4
 *A        1    0    0    1
 *B        0    1    0    1
 *C        0    0    1    1
-*A+B    0    0    1    0
-*B+C    1    0    0    0
-*A+C    0    1    0    0
+*A+B      0    0    1    0
+*B+C      1    0    0    0
+*A+C      0    1    0    0
 *A+B+C    0    0    0    0
 ***********************
 ***********************
 remoteQth matrix:
-*        a    b    c    bal
-*A        1    0    0    0
-*B        0    1    0    0
-*C        0    0    1    0
+*       a    b    c    bal
+*A      1    0    0    0
+*B      0    1    0    0
+*C      0    0    1    0
 *A+B    1    1    0    1
 *B+C    0    1    1    1
-(*A+C    1    0    1    1)
-*A+B+C    1    1    1    1
+(*A+C   1    0    1    1)
+*A+B+C  1    1    1    1
 ***********************
 ***************************************************************************************************************/
 /*#include <SPI.h>
@@ -48,7 +47,7 @@ remoteQth matrix:
 #include <LiquidCrystal_I2C.h>
 #include <EEPROM.h>*/
 
-//#define ENABLEWEBSERVER
+#define ENABLEWEBSERVER
 
 //#include "/home/werkstatt/Arduino/libraries/digitalWriteFast.h"
 #include "digitalWriteFast.h"
@@ -73,14 +72,14 @@ remoteQth matrix:
 #define  LED_OFF  0
 #define  LED_ON  1
 */
-//#define DEBUG
+#define DEBUG
 
 const byte epromAddresses[] = { 0,1,2,3,4,5,6,7 };
-#define SKETCHMODE 6         // 0 = multibeaming / 1 = stack2 / 2 = stack3  / 3 = sj2w_multibeaming / 4 = sj2w stack3  / 5 CN3A => this will enable the needed files for each mode... so choose your mode...
+#define SKETCHMODE 6         // 0 = multibeaming / 1 = stack2 / 2 = stack3  / 3 = sj2w_multibeaming / 4 = sj2w stack3  / 5 CN3A  /6 F6KNB => this will enable the needed files for each mode... so choose your mode...
 
 
 //LiquidCrystal_I2C  lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
-LiquidCrystal_I2Clcd(I2C_ADDR, 20, 4); 	//only needed lcd(adress, n columns, n rows) here a 20x4 @ 0x27
+LiquidCrystal_I2C lcd(I2C_ADDR, 20, 4); 	//only needed lcd(adress, n columns, n rows) here a 20x4 @ 0x27
 #ifdef ENABLEWEBSERVER
 	byte mac[] = { 0xDE, 0x7D, 0xBE, 0xEF, 0xFE, 0xED };  	//**************************************** <-------------------------CHANGE MAC-ADRESS IF YOU HAVE MORE THAN 1 CONTROLLER
 	////////////////////////////////   CONFIGURE YOUR DEFAULT DETTINGS HERE   /////////////////////////////////////////////
@@ -91,11 +90,12 @@ LiquidCrystal_I2Clcd(I2C_ADDR, 20, 4); 	//only needed lcd(adress, n columns, n r
 	EthernetServer server(80);                  		//*************************************************** <------------------------CHANGE PORT, IF YOU DONT LIKE PORT 80           
 #endif
 	////////////////////////////// NO CHANGES HERE!!!!!
-boolean registersRx[4] = { 0, 0, 0, 0 };
-boolean registersTx[4] = { 0, 0, 0, 0 };
-boolean registersRxLed[4] = { 0, 0, 0, 0 };
-boolean registersTxLed[4] = { 0, 0, 0, 0 };
-boolean registersDisplay[4] = { 0, 0, 0, 0 };
+ //F4CIB enlarged array to 8 but use only 5
+boolean registersRx[8] = { 0, 0, 0, 0, 0 };
+boolean registersTx[8] = { 0, 0, 0, 0, 0 };
+boolean registersRxLed[8] = { 0, 0, 0, 0, 0 };
+boolean registersTxLed[8] = { 0, 0, 0, 0, 0 };
+boolean registersDisplay[8] = { 0, 0, 0, 0, 0 };
 
 ///////////////////////////////////////// Change the labels you want to have... there are about 11 chars left. so dont use longer labels than 11 chars...
 #if SKETCHMODE == 0
@@ -152,19 +152,23 @@ const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h
 const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cn3a.js'></script>" };          //******** Stack 3 And************ <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
 #if SKETCHMODE == 6
-const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://h.mmmedia-online.de/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+const char  message4[] PROGMEM = { "<script type='text/javascript' src='http://f4cib.free.fr/dm5xx/cm.js'></script>" };         //******** Multibeam ************<------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 #endif
-const char  message5[] PROGMEM = { "<link href=\"http://h.mmmedia-online.de/c.css\" rel=\"stylesheet\" type=\"text/css\"/>" };    //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
+const char  message5[] PROGMEM = { "<link href=\"http://f4cib.free.fr/dm5xx/c.css\" rel=\"stylesheet\" type=\"text/css\"/>" };    //*************************************************** <------------------------CHANGE to your File-Location URL IF NEEDED !!!!!!
 const char  message6[] PROGMEM = { "<link rel = \"shortcut icon\" href=\"http://h.mmmedia-online.de/favicon.ico\">" };
 const char  message7[] PROGMEM = { "</head>" };
 const char  message8[] PROGMEM = { "<body>" };
 const char  message9[] PROGMEM = { "<div id=\"container\">" };
 const char  message10[] PROGMEM = { "<div class=\"myTab\">" };
+const char  message101[] PROGMEM = { "<table class=\"myTable_bev\"> <tr> <td> </td> <td> <a id=\"bev1\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev1)\"> </a> </td> <td> </td> <td> <a id=\"bev2\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev2)\"> </a> </td> <td> </td> </tr> "};
+const char  message102[] PROGMEM = { "<tr> <td> <a id=\"bev3\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev3)\"> </a> </td> <td> </td> <td> <a id=\"b0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a> </td> <td> </td> <td> <a id=\"bev4\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev4)\"> </a> </td> </tr> "};
+const char  message103[] PROGMEM = { "<tr> <td> </td> <td> <a id=\"bev5\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev5)\"> </a> </td> <td> </td> <td> <a id=\"bev6\" href=\"#\" class=\"myButton_bev\" onClick=\"clkButton(bev6)\"> </a> </td> <td> </td> </tr> </table> "};
+const char  message104[] PROGMEM = { "</div> <div class=\"myTab\">" };
 const char  message11[] PROGMEM = { "<table class=\"myTable\">" };
-const char  message12[] PROGMEM = { "<tr><td><a id=\"b0\" href=\"#\" class=\"myButton\" onClick=\"clkButton(0)\"> </a></td>" };
-const char  message13[] PROGMEM = { "<td><a id=\"b1\" href=\"#\" class=\"myButton\" onClick=\"clkButton(1)\"> </a></td>" };
-const char  message14[] PROGMEM = { "<td><a id=\"b2\" href=\"#\" class=\"myButton\" onClick=\"clkButton(2)\"> </a></td>" };
-const char  message15[] PROGMEM = { "<td><a id=\"b3\" href=\"#\" class=\"myButton\" onClick=\"clkButton(3)\"> </a></td>" };
+const char  message12[] PROGMEM = { "<tr><td><a id=\"b1\" href=\"#\" class=\"myButton\" onClick=\"clkButton(1)\"> </a></td>" };
+const char  message13[] PROGMEM = { "<td><a id=\"b2\" href=\"#\" class=\"myButton\" onClick=\"clkButton(2)\"> </a></td>" };
+const char  message14[] PROGMEM = { "<td><a id=\"b3\" href=\"#\" class=\"myButton\" onClick=\"clkButton(3)\"> </a></td>" };
+const char  message15[] PROGMEM = { "<td><a id=\"b4\" href=\"#\" class=\"myButton\" onClick=\"clkButton(4)\"> </a></td>" };
 const char  message16[] PROGMEM = { "<td align=\"center\"><a id=\"b4\" href=\"#\" class=\"myButton right\" onClick=\"clkButton(4)\"> </a></td>" };
 const char  message17[] PROGMEM = { "</tr>" };
 const char  message18[] PROGMEM = { "</table>" };
@@ -191,9 +195,12 @@ const char  message23[] PROGMEM = { "<script>var urlToArduino='http://192.168.1.
 #if SKETCHMODE == 5
 const char  message23[] PROGMEM = { "<script>var urlToArduino='http://192.168.1.179';\t\n$('#container').css(\"background-image\", \"url(http://h.mmmedia-online.de/stack.png)\"); " }; //********UNCOMMENT/COMMENT NEEDED VERSION: Stack***************** <------------------------CHANGE to Arduino AND File-Location URL IF NEEDED !!!!!!
 #endif
+#if SKETCHMODE == 6
+const char  message23[] PROGMEM = { "<script>var urlToArduino='http://192.168.1.179';\t\n$('#container').css(\"background-image\", \"url(http://f4cib.free.fr/dm5xx/multi_F6KNB.jpg)\"); " }; //********UNCOMMENT/COMMENT NEEDED VERSION: Multibeaming************ <------------------------CHANGE to Arduino AND File-Location URL IF NEEDED !!!!!!
+#endif
 const char  message24[] PROGMEM = { "init();</script>" };
 const char  message25[] PROGMEM = { "</html>" };
-const byte webArraySize = 26;
+const byte webArraySize = 30;
 const char * const messages[webArraySize] PROGMEM =
 {
 	message0,
@@ -207,6 +214,10 @@ const char * const messages[webArraySize] PROGMEM =
 	message8,
 	message9,
 	message10,
+	message101,
+	message102,
+	message103,
+	message104,
 	message11,
 	message12,
 	message13,
@@ -252,7 +263,7 @@ boolean oldMode = 1;
 byte currentButton;
 boolean isCurrentEditModeTX;
 boolean isInRelayInvertMode = false;        // set this to true if you want to use hardware with inverted relay out. Normal (false) mode: relays are switched on (0=>1). Inverted mode: relays are switched out (1 => 0);
-											//////////////////////////////////////////////// Main Setup //////////////////////////////////////////////////////////////
+//////////////////////////////////////////////// Main Setup //////////////////////////////////////////////////////////////
 void setup()
 {
 	Serial.begin(9600);
@@ -270,11 +281,11 @@ void setup()
 }
 void readFromEprom()
 {
-	for (byte a = 0; a < 4; a++)
+	for (byte a = 0; a < 8; a++)
 	{
-		byte ashift = a + 4;
+		byte ashift = a + 8;
 		byte value = EEPROM.read(epromAddresses[a]);
-		byte valueShift = EEPROM.read(epromAddresses[ashift]); // tx values are stored 4 bytes after rx
+		byte valueShift = EEPROM.read(epromAddresses[ashift]); // tx values are stored 8 bytes after rx
 		registersRx[a] = value;
 		registersTx[a] = valueShift;
 		registersRxLed[a] = value;
@@ -284,9 +295,9 @@ void readFromEprom()
 }
 void writeToEprom()
 {
-	for (byte a = 0; a < 4; a++)
+	for (byte a = 0; a < 8; a++)
 	{
-		byte ashift = a + 4;
+		byte ashift = a + 8;
 		EEPROM.write(epromAddresses[a], registersRx[a]);
 		EEPROM.write(epromAddresses[ashift], registersTx[a]);
 	}
@@ -331,9 +342,9 @@ void setupRegisters()
 }
 void setupLCD()
 {
-	lcd.begin(16, 2); // initialize the lcd
-	lcd.setBacklightPin(BACKLIGHT_PIN, NEGATIVE);
-	lcd.setBacklight(LED_ON);
+//	lcd.begin(16, 2); // initialize the lcd
+//	lcd.setBacklightPin(BACKLIGHT_PIN, NEGATIVE);
+//	lcd.setBacklight(LED_ON);
 	displayWelcomeText();
 	betterDelay(2000);
 	displayVersion();
@@ -461,7 +472,7 @@ void resetDisplay()
 	lcd.backlight();
 	lcd.setCursor(0, 0);
 }
-// swirtch the -> to the needed position
+// switch the -> to the needed position
 void switchArrow(boolean mode)
 {
 	byte a = 0;
@@ -504,10 +515,10 @@ void writeRelayRegister(boolean registers[])
 	byte inverter = 0;
 	byte displayinverter = 0;
 	byte counter = 0;
-	for (int x = 0; x < 4; x++)
+	for (int x = 0; x < 5; x++)// set it to 5 if 6,7,8 have not been defined in the array, otherwise you'll get a cyclic reboot
 	{
 		tempRegisters[x] = registers[x];
-		tempRegisters[x + 4] = registersDisplay[x];
+		tempRegisters[x + 8] = registersDisplay[x];
 		counter += registers[x]; // sum all who are on
 	}
 
@@ -554,13 +565,13 @@ int balunpin = 4;
 // write the values of a gioven register into the display register, only needed for showing the button status
 void writeDisplayRegister(boolean regA[])
 {
-	for (int a = 0; a < 4; a++)
+	for (int a = 0; a < 5; a++)
 		registersDisplay[a] = regA[a];
 }
 // set the complete Register array to given value
 void toggleRegisterArray(boolean regA[], byte v1)
 {
-	for (int a = 0; a < 4; a++)
+	for (int a = 0; a < 5; a++)
 		regA[a] = v1;
 }
 // In some Setups, at least 1 output should be connected
@@ -696,7 +707,7 @@ void triggerRXWorkflow()
 }
 
 /*------------------------------------------------- Button handling ---------------------------------------------------------------*/
-// return the pressed button depending on the reistor array
+// return the pressed button depending on the resistor array
 byte getPressedButton()
 {
 	int c = getMyAverageValue();
@@ -813,7 +824,7 @@ void getStatus(EthernetClient client)
 	client.println("Access-Control-Allow-Origin: *");
 	client.println("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 	client.println("Access-Control-Allow-Headers: Authorization");
-	client.println();isInEditModeTX
+	client.println();//isInEditModeTX
 	client.print("xx({\"v\": \"");
 	client.print(arrRx);
 	client.print("|");
@@ -848,7 +859,7 @@ void printProgStr(const char * str, EthernetClient client)
 // Writes to both of the registers directly - Remember: If you are calling the webserverm you have to take care about urself about button-switching logic and restrictions
 void writeToTheRegister(boolean regiA[], String theString)
 {
-	for (int d = 0; d < 4; d++)
+	for (int d = 0; d < 5; d++)
 	{
 		boolean val = true;
 		if (theString[d] == '0')
@@ -857,11 +868,12 @@ void writeToTheRegister(boolean regiA[], String theString)
 		registersDisplay[d] = val;
 	}
 }
+
 // convert an array into the string for the response method
 String convertArrayToString(boolean ri[])
 {
 	String mytemp;
-	for (int f = 0; f < 4; f++)
+	for (int f = 0; f < 5; f++)
 	{
 		if (ri[f] == true)
 			mytemp += "1";
@@ -870,6 +882,7 @@ String convertArrayToString(boolean ri[])
 	}
 	return mytemp;
 }
+
 void betterDelay(uint32_t ms)
 {
 	uint32_t start = micros();
@@ -880,3 +893,199 @@ void betterDelay(uint32_t ms)
 		//            break;
 	}
 }
+
+#if SKETCHMODE == 6
+
+void specialSetup()
+{}
+
+// the welcome info. you are not allowed to change anything here! CC
+void displayWelcomeText()
+{
+  lcd.init(); //mandatory for I2C LCD
+  lcd.clear();
+  lcd.home();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print(" remoteQTH.com ");
+  lcd.setCursor(0, 1);
+  lcd.print(" openMultiCon");
+}
+
+// the default start screen template
+void displayMain()
+{
+  resetDisplay();
+  lcd.print("->RX");
+  lcd.setCursor(0, 1);
+  lcd.print("  TX");
+}
+
+// set value of the pressed button into the relay register. Here you can define the mappings for the relays
+void setRegisterArray(byte button, boolean regArr[])
+{
+  byte checkHowManyOn = verifyButtons(regArr, 4);
+
+  boolean isSameKeyPressed = false;
+
+  if (regArr[button - 1] == 1)
+    isSameKeyPressed = true;
+
+  if (checkHowManyOn == 1 && button < 4)
+  {
+    if (isSameKeyPressed == false)
+    {
+      regArr[0] = 0;
+      regArr[1] = 0;
+      regArr[2] = 0;
+      regArr[button - 1] = 1;
+      return;
+    }
+    else
+    {
+      if (button == 1)
+      {
+        regArr[0] = 1;
+        regArr[1] = 1;
+        regArr[2] = 0;
+        return;
+      }
+      if (button == 2)
+      {
+        regArr[0] = 0;
+        regArr[1] = 1;
+        regArr[2] = 1;
+        return;
+      }
+      if (button == 3)
+      {
+        regArr[0] = 1;
+        regArr[1] = 0;
+        regArr[2] = 1;
+        return;
+      }
+    }
+  }
+  if (checkHowManyOn == 2 && button < 4)
+  {
+    regArr[0] = 0;
+    regArr[1] = 0;
+    regArr[2] = 0;
+    regArr[button - 1] = 1;
+    return;
+  }
+
+  if (checkHowManyOn == 1 && button == 4)
+  {
+    toggleRegisterArray(regArr, 1);
+    return;
+  }
+
+  if (checkHowManyOn == 4 && button < 4 || checkHowManyOn == 3 && button < 4)
+  {
+    toggleRegisterArray(regArr, 0);
+    regArr[button - 1] = 1;
+    return;
+  }
+
+  if (checkHowManyOn == 4 && button == 4)
+  {
+    regArr[0] = 1;
+    regArr[1] = 1;
+    regArr[2] = 0;
+    return;
+  }
+
+  if (checkHowManyOn == 3 && button == 4 && regArr[0] == 1)
+  {
+    regArr[0] = 0;
+    regArr[1] = 1;
+    regArr[2] = 1;
+    return;
+  }
+
+  if (checkHowManyOn == 3 && button == 4 && regArr[2] == 1)
+  {
+    regArr[0] = 1;
+    regArr[1] = 1;
+    regArr[2] = 1;
+    return;
+  }
+
+  if (checkHowManyOn == 2 && button == 4)
+  {
+    regArr[0] = 1;
+    regArr[1] = 1;
+    regArr[2] = 1;
+    regArr[3] = 1;
+    return;
+  }
+}
+
+
+// Here you can define possible exceptions buttons/leds vs. relays. Default is 1:1
+void setRegisterLed(boolean isTx)
+{
+  if (isTx)
+  {
+    byte checkOne = verifyButtons(registersTx, 4);
+    Serial.println(checkOne);
+    for (int i = 0; i<4; i++)
+    {
+      registersTxLed[i] = registersTx[i];
+    }
+
+    if (checkOne == 3)
+      registersTxLed[3] = 0;
+  }
+  else
+  {
+    for (int i = 0; i<4; i++)
+    {
+      registersRxLed[i] = registersRx[i];
+    }
+  }
+}
+
+
+void setDisplay(boolean regArry[], byte row)
+{
+  clearLabels(row);
+  lcd.setCursor(5, row);
+
+  int sum = 0;
+  sum = verifyButtons(regArry, 4);
+  //Serial.print("summe ");
+  //Serial.print(sum);
+
+  if (sum == 1 || sum > 3)
+  {
+    for (byte i = 3; i >= 0; i--)
+    {
+      if (regArry[i] == 1)
+      {
+        lcd.print(txDisplayArray[i]);
+        return;
+      }
+    }
+  }
+  else
+  {
+    if (regArry[0] == 1 && regArry[1] == 1)
+    {
+      lcd.print(txDisplayArray[4]);
+      return;
+    }
+    if (regArry[0] == 1 && regArry[2] == 1)
+    {
+      lcd.print(txDisplayArray[5]);
+      return;
+    }
+    if (regArry[1] == 1 && regArry[2] == 1)
+    {
+      lcd.print(txDisplayArray[6]);
+      return;
+    }
+  }
+}
+#endif
